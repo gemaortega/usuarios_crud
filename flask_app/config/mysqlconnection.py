@@ -1,18 +1,19 @@
 import pymysql.cursors
-# this class will give us an instance of a connection to our database
+from flask_app.config.constants import DB_HOST, DB_USER, DB_PASSWORD
+
 class MySQLConnection:
+
     def __init__(self, db):
-        # change the user and password as needed
-        connection = pymysql.connect(host = '186.106.112.47',
-                                    user = 'root', 
-                                    password = 'pandemia', 
-                                    db = db,
-                                    charset = 'utf8mb4',
-                                    cursorclass = pymysql.cursors.DictCursor,
-                                    autocommit = True)
-        # establish the connection to the database
+        connection = pymysql.connect(host=DB_HOST,
+                                     user=DB_USER, 
+                                     password=DB_PASSWORD, 
+                                     db=db,
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor,
+                                     autocommit=True)
+
         self.connection = connection
-    # the method to query the database
+
     def query_db(self, query, data=None):
         with self.connection.cursor() as cursor:
             try:
@@ -31,12 +32,11 @@ class MySQLConnection:
                     # UPDATE and DELETE queries will return nothing
                     self.connection.commit()
             except Exception as e:
-                # if the query fails the method will return FALSE
                 print("Something went wrong", e)
                 return False
             finally:
-                # close the connection
                 self.connection.close() 
-# connectToMySQL receives the database we're using and uses it to create an instance of MySQLConnection
+
+
 def connectToMySQL(db):
     return MySQLConnection(db)
